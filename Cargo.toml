@@ -2,6 +2,10 @@
 name = "qkd-sampler"
 version = "0.0.1"
 edition = "2024"
+authors = ["Daniel Escanez-Exposito <jescanez@ull.edu.es>"]
+description = "A Quantum Key Distribution sampler developed in Rust"
+repository = "https://github.com/jdanielescanez/qkd-sampler"
+license = "MIT"
 
 [dependencies]
 clap = { version = "4.5.48", features = ["derive"] }
