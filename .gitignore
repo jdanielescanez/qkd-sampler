@@ -1,1 +1,7 @@
-/target
+**/target
+
+**/dist
+
+**/node_modules
+
+**/docs
