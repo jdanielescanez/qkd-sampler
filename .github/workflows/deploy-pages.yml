@@ -26,6 +26,12 @@ jobs:
       - name: Install wasm-pack
         run: curl https://rustwasm.github.io/wasm-pack/installer/init.sh -sSf | sh
 
+      - name: Check out latest qkd source
+        uses: actions/checkout@master
+        with:
+          repository: jdanielescanez/qkd
+          path: ../qkd
+
       - name: Build WASM
         working-directory: web/crate
         run: wasm-pack build --target web --out-dir ../wasm --release
