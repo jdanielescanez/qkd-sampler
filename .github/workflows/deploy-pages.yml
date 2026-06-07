@@ -30,10 +30,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           repository: jdanielescanez/qkd
-          path: qkd-lib
-
-      - name: Place qkd where Cargo expects it
-        run: ln -s "$GITHUB_WORKSPACE/qkd-lib" "$GITHUB_WORKSPACE/../qkd"
+          path: web/qkd
 
       - name: Build WASM
         working-directory: web/crate
