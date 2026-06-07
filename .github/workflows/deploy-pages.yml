@@ -27,10 +27,13 @@ jobs:
         run: curl https://rustwasm.github.io/wasm-pack/installer/init.sh -sSf | sh
 
       - name: Check out latest qkd source
-        uses: actions/checkout@master
+        uses: actions/checkout@v4
         with:
           repository: jdanielescanez/qkd
-          path: ../qkd
+          path: qkd-lib
+
+      - name: Place qkd where Cargo expects it
+        run: ln -s "$GITHUB_WORKSPACE/qkd-lib" "$GITHUB_WORKSPACE/../qkd"
 
       - name: Build WASM
         working-directory: web/crate
