@@ -1,0 +1,19 @@
+[tools]
+rust = "latest"
+node = "22"
+"npm:pnpm" = "9"
+"cargo:wasm-pack" = "latest"
+
+[tasks.build]
+description = "Build WASM and frontend"
+run = "./build.sh"
+
+[tasks.dev]
+description = "Start Vite dev server (WASM must be built first)"
+dir = "web"
+run = "pnpm dev"
+
+[tasks.wasm]
+description = "Build WASM only (dev mode)"
+dir = "web/crate"
+run = "wasm-pack build --target web --out-dir ../wasm --dev"
