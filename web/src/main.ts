@@ -1,89 +1,88 @@
 /**
- * Application entry point. Wires together form, engine, metrics,
- * charts, CSV export, and theme toggle.
+ * Application entry point. Wires together form, engine, loader,
+ * filters, metrics, charts, CSV export, and theme toggle.
  * @module main
  */
 import "./style.css";
 import { initTheme, toggleTheme } from "./theme";
 import { initForm, setFormDisabled } from "./form";
 import { startSimulation, abortSimulation } from "./engine";
-import { initCharts, clearCharts, renderAllResults } from "./plots";
-import { resetMetrics, pushResult } from "./metrics";
+import { initCharts, clearCharts, renderCharts } from "./plots";
+import { hideMetrics, showMetrics, renderMetrics } from "./metrics";
+import { initFilters, hideFilters, showFilters, filterResults } from "./filters";
+import { initLoader, showLoader, hideLoader, updateProgress, updateSecure } from "./loader";
 import { downloadCsv } from "./csv-export";
 import type { ExperimentResult, SimulationParams } from "./types";
+import type { FilterSelection } from "./filters";
 
-/** Accumulated results for the current simulation session. */
 const results: ExperimentResult[] = [];
 let running = false;
+let secureCount = 0;
 
 initTheme();
 initForm(onSubmit);
 initCharts();
+initLoader();
+initFilters(onFilterChange);
 
 document.getElementById("theme-toggle")!.addEventListener("click", toggleTheme);
 document.getElementById("abort-btn")!.addEventListener("click", onAbort);
 document.getElementById("download-btn")!.addEventListener("click", () => downloadCsv(results));
 
-/**
- * Handles form submission: resets state and starts the simulation.
- * @param params - Validated simulation parameters from the form.
- */
 function onSubmit(params: SimulationParams): void {
   results.length = 0;
+  secureCount = 0;
   running = true;
   setFormDisabled(true);
   clearCharts();
-  resetMetrics();
-  showProgress(0, 1);
-  showChartsSection(false);
+  hideMetrics();
+  hideFilters();
+  showLoader();
+  document.getElementById("charts-section")!.classList.add("hidden");
   document.getElementById("abort-btn")!.classList.remove("hidden");
 
   startSimulation(params, {
     onResult(r) {
       results.push(r);
-      pushResult(r);
+      if (r.is_considered_secure) secureCount++;
+      updateSecure(secureCount, results.length);
     },
     onProgress(completed, total) {
-      showProgress(completed, total);
+      updateProgress(completed, total);
     },
     onDone() {
       running = false;
       setFormDisabled(false);
       document.getElementById("abort-btn")!.classList.add("hidden");
-      showChartsSection(true);
-      renderAllResults(results);
+      hideLoader();
+      finishSimulation();
     },
   });
 }
 
-/** Aborts the current simulation. Renders partial results if any. */
 function onAbort(): void {
   if (!running) return;
   abortSimulation();
   running = false;
   setFormDisabled(false);
   document.getElementById("abort-btn")!.classList.add("hidden");
-  if (results.length > 0) {
-    showChartsSection(true);
-    renderAllResults(results);
-  }
+  hideLoader();
+  if (results.length > 0) finishSimulation();
 }
 
-/**
- * Updates the progress bar and text.
- * @param completed - Number of experiments finished.
- * @param total - Total number of experiments.
- */
-function showProgress(completed: number, total: number): void {
-  const pct = total > 0 ? (completed / total) * 100 : 0;
-  document.getElementById("progress-bar")!.style.width = `${pct}%`;
-  document.getElementById("progress-text")!.textContent = `${completed} / ${total}`;
+function finishSimulation(): void {
+  const sel = showFilters(results);
+  renderWithSelection(sel);
+  document.getElementById("charts-section")!.classList.remove("hidden");
+  showMetrics();
 }
 
-/**
- * Shows or hides the charts section.
- * @param visible - Whether charts should be visible.
- */
-function showChartsSection(visible: boolean): void {
-  document.getElementById("charts-section")!.classList.toggle("hidden", !visible);
+function onFilterChange(sel: FilterSelection): void {
+  renderWithSelection(sel);
+}
+
+function renderWithSelection(sel: FilterSelection): void {
+  const filtered = filterResults(results, sel);
+  renderMetrics(filtered);
+  renderCharts(filtered);
 }

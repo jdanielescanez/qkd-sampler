@@ -1,113 +1,74 @@
 /**
- * Chart rendering using Plotly.js.
- * Charts are rendered in a single batch after simulation completes.
+ * Chart rendering: two stacked QBER histograms for successful iterations.
+ * Bar color indicates whether eavesdropping was successful (eve_knowledge > 0).
  * @module plots
  */
 import Plotly from "plotly.js-dist-min";
 import type { ExperimentResult } from "./types";
 import { isDark } from "./theme";
 
-/** Protocol color mapping for consistent chart styling. */
-const COLORS: Record<string, string> = {
-  BB84: "#2563eb",
-  SixState: "#16a34a",
-  B92: "#dc2626",
-};
+let measuredDiv: HTMLElement;
+let finalDiv: HTMLElement;
 
-let scatterDiv: HTMLElement;
-let histDiv: HTMLElement;
-let barDiv: HTMLElement;
-
-/** Initializes chart containers and registers theme change listener. */
+/** Initializes chart containers and registers theme listener. */
 export function initCharts(): void {
-  scatterDiv = document.getElementById("chart-scatter")!;
-  histDiv = document.getElementById("chart-hist")!;
-  barDiv = document.getElementById("chart-bar")!;
+  measuredDiv = document.getElementById("chart-measured-qber")!;
+  finalDiv = document.getElementById("chart-final-qber")!;
 
   window.addEventListener("theme-changed", () => {
     const l = baseLayout();
-    Plotly.relayout(scatterDiv, l);
-    Plotly.relayout(histDiv, l);
-    Plotly.relayout(barDiv, l);
+    Plotly.relayout(measuredDiv, l);
+    Plotly.relayout(finalDiv, l);
   });
 }
 
 /** Purges all chart instances. */
 export function clearCharts(): void {
-  Plotly.purge(scatterDiv);
-  Plotly.purge(histDiv);
-  Plotly.purge(barDiv);
+  Plotly.purge(measuredDiv);
+  Plotly.purge(finalDiv);
 }
 
 /**
- * Renders all charts from the complete results array.
- * Called once after simulation finishes (or on abort with partial data).
- * @param results - All collected experiment results.
+ * Renders the two QBER histograms from filtered, successful-only results.
+ * @param results - Pre-filtered results (should already match variable selection).
  */
-export function renderAllResults(results: ExperimentResult[]): void {
-  // Scatter: QBER vs interception rate, one trace per protocol
-  const protocols = [...new Set(results.map((r) => r.protocol))];
-  const scatterTraces = protocols.map((proto) => {
-    const pts = results.filter((r) => r.protocol === proto);
-    return {
-      x: pts.map((r) => r.interception_rate),
-      y: pts.map((r) => r.measured_qber),
-      mode: "markers",
-      type: "scatter" as const,
-      name: proto,
-      marker: { color: COLORS[proto] || "#666", size: 5 },
-    };
-  });
+export function renderCharts(results: ExperimentResult[]): void {
+  const secure = results.filter((r) => r.is_considered_secure);
 
-  Plotly.newPlot(scatterDiv, scatterTraces, {
-    ...baseLayout(),
-    title: "Measured QBER vs Interception Rate",
-    xaxis: { title: "Interception Rate", gridcolor: gridColor() },
-    yaxis: { title: "Measured QBER", gridcolor: gridColor() },
-  }, { responsive: true });
+  const clean = secure.filter((r) => r.eve_knowledge === 0);
+  const eaved = secure.filter((r) => r.eve_knowledge > 0);
 
-  // Histogram: QBER distribution
-  Plotly.newPlot(histDiv, [{
-    x: results.map((r) => r.measured_qber),
-    type: "histogram" as const,
-    marker: { color: "#2563eb" },
-  }], {
+  // Measured QBER histogram
+  Plotly.newPlot(measuredDiv, [
+    { x: clean.map((r) => r.measured_qber), type: "histogram" as const, name: "No eavesdropping", marker: { color: "#60a5fa" }, opacity: 0.8 },
+    { x: eaved.map((r) => r.measured_qber), type: "histogram" as const, name: "Eve's knowledge > 0", marker: { color: "#1e3a5f" }, opacity: 0.9 },
+  ], {
     ...baseLayout(),
-    title: "QBER Distribution",
-    xaxis: { title: "QBER", gridcolor: gridColor() },
+    barmode: "stack",
+    title: "Measured QBER Distribution (Secure Only)",
+    xaxis: { title: "Measured QBER", gridcolor: gridColor() },
     yaxis: { title: "Count", gridcolor: gridColor() },
+    legend: { x: 0.7, y: 0.95 },
   }, { responsive: true });
 
-  // Bar: average key length per protocol
-  const protoStats: Record<string, { sum: number; count: number }> = {};
-  for (const r of results) {
-    if (!protoStats[r.protocol]) protoStats[r.protocol] = { sum: 0, count: 0 };
-    if (r.key_length !== null) {
-      protoStats[r.protocol].sum += r.key_length;
-      protoStats[r.protocol].count++;
-    }
-  }
-  const protos = Object.keys(protoStats);
-  const avgs = protos.map((p) => protoStats[p].count ? protoStats[p].sum / protoStats[p].count : 0);
+  // Final Key QBER histogram
+  const cleanFinal = clean.filter((r) => r.final_key_qber !== null);
+  const eavedFinal = eaved.filter((r) => r.final_key_qber !== null);
 
-  Plotly.newPlot(barDiv, [{
-    x: protos,
-    y: avgs,
-    type: "bar" as const,
-    marker: { color: protos.map((p) => COLORS[p] || "#666") },
-  }], {
+  Plotly.newPlot(finalDiv, [
+    { x: cleanFinal.map((r) => r.final_key_qber!), type: "histogram" as const, name: "No eavesdropping", marker: { color: "#60a5fa" }, opacity: 0.8 },
+    { x: eavedFinal.map((r) => r.final_key_qber!), type: "histogram" as const, name: "Eve's knowledge > 0", marker: { color: "#1e3a5f" }, opacity: 0.9 },
+  ], {
     ...baseLayout(),
-    title: "Avg Key Length by Protocol",
-    xaxis: { title: "Protocol" },
-    yaxis: { title: "Avg Key Length", gridcolor: gridColor() },
+    barmode: "stack",
+    title: "Final Key QBER Distribution (Secure Only)",
+    xaxis: { title: "Final Key QBER", gridcolor: gridColor() },
+    yaxis: { title: "Count", gridcolor: gridColor() },
+    legend: { x: 0.7, y: 0.95 },
   }, { responsive: true });
 }
 
-/**
- * Returns the base Plotly layout adapted to the current theme.
- * @returns Layout object with colors matching dark/light mode.
- */
-function baseLayout(): Record<string, any> {
+function baseLayout(): Record<string, unknown> {
   const dark = isDark();
   return {
     paper_bgcolor: dark ? "#1e293b" : "#ffffff",
@@ -117,7 +78,6 @@ function baseLayout(): Record<string, any> {
   };
 }
 
-/** Returns the grid line color for the current theme. */
 function gridColor(): string {
   return isDark() ? "#334155" : "#e2e8f0";
 }

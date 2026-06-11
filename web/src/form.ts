@@ -98,11 +98,7 @@ function initTagField(id: string, defaults: number[]): void {
   input.addEventListener("keydown", (e) => {
     if (e.key !== "Enter") return;
     e.preventDefault();
-    const val = parseFloat(input.value.trim());
-    if (isNaN(val)) return;
-    field.values.push(val);
-    renderTag(field, val);
-    input.value = "";
+    commitInput(field);
   });
 }
 
@@ -128,8 +124,33 @@ function renderTag(field: TagField, value: number): void {
   field.container.insertBefore(tag, field.input);
 }
 
+/**
+ * Parses comma-separated values from a tag field input and commits them as tags.
+ * @param field - The tag field to commit pending input for.
+ */
+function commitInput(field: TagField): void {
+  const raw = field.input.value;
+  if (!raw.trim()) return;
+  for (const token of raw.split(",")) {
+    const val = parseFloat(token.trim());
+    if (!isNaN(val)) {
+      field.values.push(val);
+      renderTag(field, val);
+    }
+  }
+  field.input.value = "";
+}
+
+/** Flushes any uncommitted text in all tag inputs before validation. */
+function flushPendingInputs(): void {
+  for (const field of Object.values(fields)) {
+    commitInput(field);
+  }
+}
+
 /** Validates form state and triggers the submit callback if valid. */
 function handleSubmit(): void {
+  flushPendingInputs();
   const errorEl = document.getElementById("form-error")!;
   errorEl.textContent = "";
 
