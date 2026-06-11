@@ -71,6 +71,21 @@
 
     <!-- Main Content -->
     <main class="flex-1 overflow-y-auto p-6 space-y-4 relative">
+      <!-- Idle Banner (shown when no simulation has run) -->
+      <div id="idle-banner" class="flex items-center justify-center h-full">
+        <div class="border border-slate-200 dark:border-slate-700 rounded-xl bg-white dark:bg-slate-800 shadow-sm p-10 text-center max-w-md">
+          <div class="mx-auto mb-4 w-14 h-14 rounded-lg bg-slate-100 dark:bg-slate-700 flex items-center justify-center">
+            <svg class="w-8 h-8 text-blue-600" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><circle cx="12" cy="5" r="1.5"/><circle cx="12" cy="19" r="1.5"/><circle cx="5.6" cy="8.5" r="1.5"/><circle cx="18.4" cy="8.5" r="1.5"/><circle cx="5.6" cy="15.5" r="1.5"/><circle cx="18.4" cy="15.5" r="1.5"/><line x1="12" y1="9" x2="12" y2="6.5"/><line x1="9.4" y1="10.5" x2="7.2" y2="9.3"/><line x1="9.4" y1="13.5" x2="7.2" y2="14.7"/><line x1="12" y1="15" x2="12" y2="17.5"/><line x1="14.6" y1="13.5" x2="16.8" y2="14.7"/><line x1="14.6" y1="10.5" x2="16.8" y2="9.3"/></svg>
+          </div>
+          <h2 class="text-sm font-semibold uppercase tracking-wide text-blue-600 mb-2">No Simulation Data</h2>
+          <p class="text-xs text-slate-500 dark:text-slate-400 mb-5">Configure your protocol parameters in the sidebar and click "Run Simulation" to begin the quantum key distribution analysis.</p>
+          <div class="flex justify-center gap-3">
+            <span class="inline-flex items-center gap-1.5 text-[11px] font-mono border border-slate-200 dark:border-slate-600 rounded px-3 py-1.5"><span class="w-1.5 h-1.5 rounded-full bg-green-500"></span>ENGINE IDLE</span>
+            <span class="inline-flex items-center gap-1.5 text-[11px] font-mono border border-slate-200 dark:border-slate-600 rounded px-3 py-1.5"><span class="text-slate-400">#</span>READY FOR INPUT</span>
+          </div>
+        </div>
+      </div>
+
       <!-- Circular Loader (shown during simulation) -->
       <div id="sim-loader" class="hidden absolute inset-0 flex items-center justify-center">
         <div class="relative">

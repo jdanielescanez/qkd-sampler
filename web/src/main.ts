@@ -42,6 +42,7 @@ function onSubmit(params: SimulationParams): void {
   hideMetrics();
   hideFilters();
   showLoader();
+  document.getElementById("idle-banner")!.classList.add("hidden");
   document.getElementById("charts-section")!.classList.add("hidden");
   document.getElementById("abort-btn")!.classList.remove("hidden");
 
