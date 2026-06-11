@@ -23,9 +23,11 @@ export function renderMetrics(results: ExperimentResult[]): void {
   const total = results.length;
   const secure = results.filter((r) => r.is_considered_secure);
 
-  // Avg QBER (measured + final key)
+  // Avg Measured QBER (all)
   const avgMeasuredQber = total ? results.reduce((s, r) => s + r.measured_qber, 0) / total : 0;
-  const finalQberResults = results.filter((r) => r.final_key_qber !== null);
+
+  // Avg Final Key QBER (secure only, where final_key_qber exists)
+  const finalQberResults = secure.filter((r) => r.final_key_qber !== null);
   const avgFinalQber = finalQberResults.length
     ? finalQberResults.reduce((s, r) => s + r.final_key_qber!, 0) / finalQberResults.length
     : null;
@@ -51,9 +53,8 @@ export function renderMetrics(results: ExperimentResult[]): void {
     : 0;
 
   // Render
-  setText("metric-qber", total
-    ? `${(avgMeasuredQber * 100).toFixed(2)}% / ${avgFinalQber !== null ? (avgFinalQber * 100).toFixed(2) + "%" : "—"}`
-    : "—");
+  setText("metric-qber-measured", total ? `${(avgMeasuredQber * 100).toFixed(2)}%` : "—");
+  setText("metric-qber-final", avgFinalQber !== null ? `${(avgFinalQber * 100).toFixed(2)}%` : "—");
   setText("metric-keylen", keyed.length ? `${Math.round(avgKeyLen)} bits` : "—");
   setText("metric-secure", total ? `${secure.length}/${total} = ${securePct}%` : "—");
   setText("metric-efficiency", keyed.length ? `${avgEfficiency.toFixed(1)}%` : "—");

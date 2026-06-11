@@ -76,7 +76,7 @@ export function initForm(onSubmit: (params: SimulationParams) => void): void {
  * @param disabled - Whether to disable the form.
  */
 export function setFormDisabled(disabled: boolean): void {
-  document.querySelectorAll<HTMLInputElement | HTMLButtonElement>("#params-form input, #params-form button").forEach((el) => {
+  document.querySelectorAll<HTMLInputElement | HTMLButtonElement>("#params-form input, #params-form button:not(#abort-btn)").forEach((el) => {
     el.disabled = disabled;
   });
 }
