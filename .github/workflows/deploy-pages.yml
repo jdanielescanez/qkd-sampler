@@ -18,7 +18,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - name: Add wasm32 target
         run: rustup target add wasm32-unknown-unknown
@@ -27,7 +27,7 @@ jobs:
         run: curl https://rustwasm.github.io/wasm-pack/installer/init.sh -sSf | sh
 
       - name: Check out latest qkd source
-        uses: actions/checkout@v4
+ww        uses: actions/checkout@v6
         with:
           repository: jdanielescanez/qkd
           path: web/qkd
