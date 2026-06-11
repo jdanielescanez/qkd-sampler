@@ -77,9 +77,10 @@ function onAbort(): void {
 
 function finishSimulation(): void {
   const sel = showFilters(results);
-  renderWithSelection(sel);
   document.getElementById("charts-section")!.classList.remove("hidden");
   showMetrics();
+  // Defer rendering to next frame so containers have correct dimensions
+  requestAnimationFrame(() => renderWithSelection(sel));
 }
 
 function onFilterChange(sel: FilterSelection): void {

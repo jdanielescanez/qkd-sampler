@@ -70,9 +70,9 @@
     </aside>
 
     <!-- Main Content -->
-    <main class="flex-1 overflow-y-auto p-6 space-y-4">
+    <main class="flex-1 overflow-y-auto p-6 space-y-4 relative">
       <!-- Circular Loader (shown during simulation) -->
-      <div id="sim-loader" class="hidden flex items-center justify-center w-full" style="min-height: 400px;">
+      <div id="sim-loader" class="hidden absolute inset-0 flex items-center justify-center">
         <div class="relative">
           <svg width="200" height="200" viewBox="0 0 200 200">
             <circle cx="100" cy="100" r="90" fill="none" stroke="currentColor" stroke-width="8" class="text-slate-200 dark:text-slate-700" />
@@ -131,8 +131,14 @@
 
       <!-- Charts -->
       <div id="charts-section" class="hidden space-y-4">
-        <div id="chart-measured-qber" class="h-80 border border-slate-200 dark:border-slate-700 rounded"></div>
-        <div id="chart-final-qber" class="h-80 border border-slate-200 dark:border-slate-700 rounded"></div>
+        <div class="border border-slate-200 dark:border-slate-700 rounded overflow-hidden">
+          <div id="zero-bar-measured" class="px-4 pt-3"></div>
+          <div id="chart-measured-qber" class="h-80" style="width:100%"></div>
+        </div>
+        <div class="border border-slate-200 dark:border-slate-700 rounded overflow-hidden">
+          <div id="zero-bar-final" class="px-4 pt-3"></div>
+          <div id="chart-final-qber" class="h-80" style="width:100%"></div>
+        </div>
       </div>
     </main>
   </div>
