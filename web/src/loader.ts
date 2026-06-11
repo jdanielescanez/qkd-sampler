@@ -1,6 +1,6 @@
 /**
- * Circular SVG progress loader displayed during simulation.
- * Shows live secure/total count in the center; disappears on completion.
+ * Circular SVG progress loader with stacked green (secure) and red (insecure) arcs.
+ * Together they fill proportionally to total progress.
  * @module loader
  */
 
@@ -8,21 +8,22 @@ const RADIUS = 90;
 const CIRCUMFERENCE = 2 * Math.PI * RADIUS;
 
 let container: HTMLElement;
-let circle: SVGCircleElement;
+let greenCircle: SVGCircleElement;
+let redCircle: SVGCircleElement;
 let textEl: HTMLElement;
 
 /** Initializes the loader DOM references. */
 export function initLoader(): void {
   container = document.getElementById("sim-loader")!;
-  circle = container.querySelector(".loader-circle") as unknown as SVGCircleElement;
+  greenCircle = container.querySelector(".loader-green") as unknown as SVGCircleElement;
+  redCircle = container.querySelector(".loader-red") as unknown as SVGCircleElement;
   textEl = container.querySelector(".loader-text") as HTMLElement;
 }
 
 /** Shows the loader and resets it to 0%. */
 export function showLoader(): void {
   container.classList.remove("hidden");
-  updateProgress(0, 1);
-  updateSecure(0, 0);
+  updateArcs(0, 0, 1);
 }
 
 /** Hides the loader. */
@@ -31,21 +32,25 @@ export function hideLoader(): void {
 }
 
 /**
- * Updates the circular progress stroke.
- * @param completed - Experiments completed.
- * @param total - Total experiments.
+ * Updates both arcs based on secure/insecure counts relative to total experiments.
+ * @param secure - Number of secure iterations completed.
+ * @param insecure - Number of insecure iterations completed.
+ * @param total - Total experiments to run.
  */
-export function updateProgress(completed: number, total: number): void {
-  const pct = total > 0 ? completed / total : 0;
-  const offset = CIRCUMFERENCE * (1 - pct);
-  circle.style.strokeDashoffset = String(offset);
-}
+export function updateArcs(secure: number, insecure: number, total: number): void {
+  const greenPct = total > 0 ? secure / total : 0;
+  const redPct = total > 0 ? insecure / total : 0;
 
-/**
- * Updates the center text with secure/total count.
- * @param secure - Number of secure iterations so far.
- * @param total - Total iterations completed so far.
- */
-export function updateSecure(secure: number, total: number): void {
-  textEl.textContent = `${secure} / ${total}`;
+  // Green arc: starts at top (rotation -90°)
+  greenCircle.style.strokeDashoffset = String(CIRCUMFERENCE * (1 - greenPct));
+
+  // Red arc: starts where green ends
+  const redOffset = CIRCUMFERENCE * (1 - redPct);
+  redCircle.style.strokeDashoffset = String(redOffset);
+  // Rotate red arc to start after green
+  const greenAngle = greenPct * 360;
+  redCircle.setAttribute("transform", `rotate(${-90 + greenAngle} 100 100)`);
+
+  // Center text
+  textEl.textContent = `${secure} / ${secure + insecure}`;
 }

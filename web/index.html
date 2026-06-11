@@ -76,13 +76,22 @@
         <div class="relative">
           <svg width="200" height="200" viewBox="0 0 200 200">
             <circle cx="100" cy="100" r="90" fill="none" stroke="currentColor" stroke-width="8" class="text-slate-200 dark:text-slate-700" />
-            <circle cx="100" cy="100" r="90" fill="none" stroke="currentColor" stroke-width="8"
-              class="loader-circle text-blue-600"
+            <circle cx="100" cy="100" r="90" fill="none" stroke-width="8"
+              class="loader-green"
+              stroke="#22c55e"
               stroke-dasharray="565.49"
               stroke-dashoffset="565.49"
               stroke-linecap="round"
               transform="rotate(-90 100 100)"
               style="transition: stroke-dashoffset 0.3s ease;" />
+            <circle cx="100" cy="100" r="90" fill="none" stroke-width="8"
+              class="loader-red"
+              stroke="#ef4444"
+              stroke-dasharray="565.49"
+              stroke-dashoffset="565.49"
+              stroke-linecap="round"
+              transform="rotate(-90 100 100)"
+              style="transition: stroke-dashoffset 0.3s ease, transform 0.3s ease;" />
           </svg>
           <div class="loader-text absolute inset-0 flex items-center justify-center text-lg font-mono font-semibold">0 / 0</div>
         </div>

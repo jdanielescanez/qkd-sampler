@@ -10,7 +10,7 @@ import { startSimulation, abortSimulation } from "./engine";
 import { initCharts, clearCharts, renderCharts } from "./plots";
 import { hideMetrics, showMetrics, renderMetrics } from "./metrics";
 import { initFilters, hideFilters, showFilters, filterResults } from "./filters";
-import { initLoader, showLoader, hideLoader, updateProgress, updateSecure } from "./loader";
+import { initLoader, showLoader, hideLoader, updateArcs } from "./loader";
 import { downloadCsv } from "./csv-export";
 import type { ExperimentResult, SimulationParams } from "./types";
 import type { FilterSelection } from "./filters";
@@ -18,6 +18,8 @@ import type { FilterSelection } from "./filters";
 const results: ExperimentResult[] = [];
 let running = false;
 let secureCount = 0;
+let insecureCount = 0;
+let totalExperiments = 0;
 
 initTheme();
 initForm(onSubmit);
@@ -32,6 +34,8 @@ document.getElementById("download-btn")!.addEventListener("click", () => downloa
 function onSubmit(params: SimulationParams): void {
   results.length = 0;
   secureCount = 0;
+  insecureCount = 0;
+  totalExperiments = 0;
   running = true;
   setFormDisabled(true);
   clearCharts();
@@ -45,10 +49,11 @@ function onSubmit(params: SimulationParams): void {
     onResult(r) {
       results.push(r);
       if (r.is_considered_secure) secureCount++;
-      updateSecure(secureCount, results.length);
+      else insecureCount++;
     },
-    onProgress(completed, total) {
-      updateProgress(completed, total);
+    onProgress(_completed, total) {
+      totalExperiments = total;
+      updateArcs(secureCount, insecureCount, totalExperiments);
     },
     onDone() {
       running = false;
