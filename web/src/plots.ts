@@ -145,7 +145,7 @@ function renderLineChart(div: HTMLElement, data: ExperimentResult[], bands: Band
     yaxis: { title: "Count", gridcolor: gridColor() },
     showlegend: false,
     margin: { t: 40, r: 0, b: 50, l: 40 },
-  }, { responsive: true });
+  }, { responsive: true, toImageButtonOptions: { format: "svg" } });
 }
 
 function baseLayout(): Record<string, unknown> {
