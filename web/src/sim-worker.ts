@@ -5,7 +5,7 @@
  * @module sim-worker
  */
 import type { SimulationParams, WorkerMessage, ExperimentResult } from "./types";
-import init, { run_single } from "../wasm/qkd_web.js";
+import init, { run_single, set_global_seed } from "../wasm/qkd_web.js";
 
 let ready = false;
 
@@ -21,6 +21,8 @@ self.onmessage = async (e: MessageEvent<WorkerMessage>) => {
 
   await initWasm();
   const params: SimulationParams = e.data.params;
+
+  set_global_seed(BigInt(params.seed));
 
   const total =
     params.protocols.length *

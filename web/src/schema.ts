@@ -15,6 +15,7 @@ export const SimulationParamsSchema = v.object({
   noise_probabilities: v.pipe(v.array(rate), v.minLength(1, "Add at least one noise value")),
   confidences: v.pipe(v.array(rate), v.minLength(1, "Add at least one confidence")),
   repetitions: positiveInt,
+  seed: v.pipe(v.number(), v.integer(), v.minValue(0)),
 });
 
 /**

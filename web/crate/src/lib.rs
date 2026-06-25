@@ -63,6 +63,11 @@ pub fn run_single(
 }
 
 #[wasm_bindgen]
+pub fn set_global_seed(seed: u64) {
+    qkd::set_global_seed(seed);
+}
+
+#[wasm_bindgen]
 pub fn available_protocols() -> JsValue {
     let protocols = build_all_available_protocols();
     let names: Vec<String> = protocols.keys().cloned().collect();

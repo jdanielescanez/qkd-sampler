@@ -67,6 +67,11 @@ export function initForm(onSubmit: (params: SimulationParams) => void): void {
     (document.getElementById("repetitions-input") as HTMLInputElement).value = String(saved.repetitions);
   }
 
+  // Seed
+  if (saved?.seed !== undefined) {
+    (document.getElementById("seed-input") as HTMLInputElement).value = String(saved.seed);
+  }
+
   // Submit
   document.getElementById("run-btn")!.addEventListener("click", handleSubmit);
 }
@@ -162,6 +167,10 @@ function handleSubmit(): void {
     (document.getElementById("repetitions-input") as HTMLInputElement).value || "1"
   );
 
+  const seed = parseInt(
+    (document.getElementById("seed-input") as HTMLInputElement).value || "42"
+  );
+
   const params = {
     protocols,
     sizes: fields["sizes"].values,
@@ -169,6 +178,7 @@ function handleSubmit(): void {
     noise_probabilities: fields["noise_probabilities"].values,
     confidences: fields["confidences"].values,
     repetitions,
+    seed,
   };
 
   const result = validate(params);

@@ -12,5 +12,6 @@ declare module "../wasm/qkd_web.js" {
     noise: number,
     confidence: number
   ): unknown;
+  export function set_global_seed(seed: bigint): void;
   export function available_protocols(): string[];
 }

@@ -12,6 +12,8 @@ export interface SimulationParams {
   confidences: number[];
   /** Number of Monte Carlo repetitions per parameter combination. */
   repetitions: number;
+  /** Global RNG seed for reproducibility. */
+  seed: number;
 }
 
 /** Result of a single QKD experiment, returned by the WASM module. */
