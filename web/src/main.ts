@@ -1,6 +1,6 @@
 /**
  * Application entry point. Wires together form, engine, loader,
- * filters, metrics, charts, CSV export, and theme toggle.
+ * filters, protocol toggle, metrics, charts, CSV export, and theme toggle.
  * @module main
  */
 import "./style.css";
@@ -9,8 +9,9 @@ import { initForm, setFormDisabled } from "./form";
 import { startSimulation, abortSimulation } from "./engine";
 import { initCharts, clearCharts, renderCharts } from "./plots";
 import { hideMetrics, showMetrics, renderMetrics } from "./metrics";
-import { initFilters, hideFilters, showFilters, filterResults } from "./filters";
+import { initFilters, hideFilters, showFilters, filterResults, getSelection } from "./filters";
 import { initLoader, showLoader, hideLoader, updateArcs } from "./loader";
+import { initProtocolToggle, showProtocolToggle, hideProtocolToggle, getActiveProtocols } from "./protocol-toggle";
 import { downloadCsv } from "./csv-export";
 import type { ExperimentResult, SimulationParams } from "./types";
 import type { FilterSelection } from "./filters";
@@ -26,6 +27,7 @@ initForm(onSubmit);
 initCharts();
 initLoader();
 initFilters(onFilterChange);
+initProtocolToggle(onProtocolChange);
 
 document.getElementById("theme-toggle")!.addEventListener("click", toggleTheme);
 document.getElementById("abort-btn")!.addEventListener("click", onAbort);
@@ -41,6 +43,7 @@ function onSubmit(params: SimulationParams): void {
   clearCharts();
   hideMetrics();
   hideFilters();
+  hideProtocolToggle();
   showLoader();
   document.getElementById("idle-banner")!.classList.add("hidden");
   document.getElementById("charts-section")!.classList.add("hidden");
@@ -78,9 +81,10 @@ function onAbort(): void {
 
 function finishSimulation(): void {
   const sel = showFilters(results);
+  const protocols = [...new Set(results.map((r) => r.protocol))];
+  showProtocolToggle(protocols);
   document.getElementById("charts-section")!.classList.remove("hidden");
   showMetrics();
-  // Defer rendering to next frame so containers have correct dimensions
   requestAnimationFrame(() => renderWithSelection(sel));
 }
 
@@ -88,8 +92,13 @@ function onFilterChange(sel: FilterSelection): void {
   renderWithSelection(sel);
 }
 
+function onProtocolChange(): void {
+  renderWithSelection(getSelection());
+}
+
 function renderWithSelection(sel: FilterSelection): void {
   const filtered = filterResults(results, sel);
-  renderMetrics(filtered);
-  renderCharts(filtered);
+  const active = getActiveProtocols();
+  renderMetrics(filtered, active);
+  renderCharts(filtered, active);
 }

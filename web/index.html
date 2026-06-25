@@ -117,37 +117,8 @@
         </div>
       </div>
 
-      <!-- Metrics (hidden until simulation completes) -->
-      <div id="metrics-section" class="hidden grid grid-cols-2 lg:grid-cols-4 xl:grid-cols-7 gap-3">
-        <div class="border border-slate-200 dark:border-slate-700 rounded p-3">
-          <div class="text-[10px] uppercase text-slate-500 dark:text-slate-400 font-medium">Avg Measured QBER</div>
-          <div id="metric-qber-measured" class="text-sm font-mono font-semibold">—</div>
-        </div>
-        <div class="border border-slate-200 dark:border-slate-700 rounded p-3">
-          <div class="text-[10px] uppercase text-slate-500 dark:text-slate-400 font-medium">Avg Final Key QBER</div>
-          <div id="metric-qber-final" class="text-sm font-mono font-semibold">—</div>
-        </div>
-        <div class="border border-slate-200 dark:border-slate-700 rounded p-3">
-          <div class="text-[10px] uppercase text-slate-500 dark:text-slate-400 font-medium">Avg Key Length</div>
-          <div id="metric-keylen" class="text-sm font-mono font-semibold">—</div>
-        </div>
-        <div class="border border-slate-200 dark:border-slate-700 rounded p-3">
-          <div class="text-[10px] uppercase text-slate-500 dark:text-slate-400 font-medium">Secure / Total</div>
-          <div id="metric-secure" class="text-sm font-mono font-semibold">—</div>
-        </div>
-        <div class="border border-slate-200 dark:border-slate-700 rounded p-3">
-          <div class="text-[10px] uppercase text-slate-500 dark:text-slate-400 font-medium">Key Efficiency</div>
-          <div id="metric-efficiency" class="text-sm font-mono font-semibold">—</div>
-        </div>
-        <div class="border border-slate-200 dark:border-slate-700 rounded p-3">
-          <div class="text-[10px] uppercase text-slate-500 dark:text-slate-400 font-medium">Mean Eve's Knowledge</div>
-          <div id="metric-eve" class="text-sm font-mono font-semibold">—</div>
-        </div>
-        <div class="border border-slate-200 dark:border-slate-700 rounded p-3">
-          <div class="text-[10px] uppercase text-slate-500 dark:text-slate-400 font-medium">Eve's Knowledge (secure)</div>
-          <div id="metric-eve-secure" class="text-sm font-mono font-semibold">—</div>
-        </div>
-      </div>
+      <!-- Metrics (hidden until simulation completes, rendered dynamically per protocol) -->
+      <div id="metrics-section" class="hidden space-y-3"></div>
 
       <!-- Charts -->
       <div id="charts-section" class="hidden space-y-4">
