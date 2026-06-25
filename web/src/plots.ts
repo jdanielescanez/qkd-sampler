@@ -37,7 +37,11 @@ export function clearCharts(): void {
 
 export function renderCharts(results: ExperimentResult[], activeProtocols: string[]): void {
   const secure = results.filter((r) => r.is_considered_secure);
-  const maxEve = Math.max(...secure.map((r) => r.eve_knowledge), 0) || 1;
+  let maxEve = 0;
+  for (let i = 0; i < secure.length; i++) {
+    if (secure[i].eve_knowledge > maxEve) maxEve = secure[i].eve_knowledge;
+  }
+  maxEve = maxEve || 1;
   const bands = makeBands(maxEve);
 
   // Measured QBER
