@@ -1,5 +1,5 @@
 /**
- * Chart rendering: two stacked QBER histograms for successful iterations.
+ * Chart rendering: two stacked line charts for successful iterations.
  * QBER=0 iterations extracted into a stacked horizontal bar above each plot.
  * Bar color encodes eve_knowledge intensity in 5 bands (0 to max in dataset).
  * @module plots
@@ -51,14 +51,14 @@ export function renderCharts(results: ExperimentResult[]): void {
   const measuredZero = secure.filter((r) => r.measured_qber === 0);
   const measuredNonZero = secure.filter((r) => r.measured_qber !== 0);
   renderZeroBar(zeroBarMeasured, measuredZero, bands, "Measured QBER = 0");
-  renderHistogram(measuredDiv, measuredNonZero, bands, "Measured QBER Distribution (Secure, QBER > 0)", "Measured QBER", true);
+  renderLineChart(measuredDiv, measuredNonZero, bands, "Measured QBER Distribution (Secure, QBER > 0)", "Measured QBER", true);
 
   // Final Key QBER
   const secureFinal = secure.filter((r) => r.final_key_qber !== null);
   const finalZero = secureFinal.filter((r) => r.final_key_qber === 0);
   const finalNonZero = secureFinal.filter((r) => r.final_key_qber !== 0);
   renderZeroBar(zeroBarFinal, finalZero, bands, "Final Key QBER = 0");
-  renderHistogram(finalDiv, finalNonZero, bands, "Final Key QBER Distribution (Secure, QBER > 0)", "Final Key QBER", false);
+  renderLineChart(finalDiv, finalNonZero, bands, "Final Key QBER Distribution (Secure, QBER > 0)", "Final Key QBER", false);
 }
 
 interface Band { lo: number; hi: number; label: string; last: boolean; }
@@ -105,21 +105,35 @@ function renderZeroBar(container: HTMLElement, data: ExperimentResult[], bands: 
   container.appendChild(wrapper);
 }
 
-function renderHistogram(div: HTMLElement, data: ExperimentResult[], bands: Band[], title: string, xLabel: string, showLegend: boolean): void {
+function renderLineChart(div: HTMLElement, data: ExperimentResult[], bands: Band[], title: string, xLabel: string, showLegend: boolean): void {
   const traces = bands.map((b, i) => {
-    const pts = filterByBand(data, b);
+    const pts = filterByBand(data, b)
+      .map((r) => xLabel.includes("Final") ? r.final_key_qber! : r.measured_qber)
+      .sort((a, b) => a - b);
+    const xVals: number[] = [];
+    const yVals: number[] = [];
+    for (const v of pts) {
+      if (xVals.length > 0 && xVals[xVals.length - 1] === v) {
+        yVals[yVals.length - 1]++;
+      } else {
+        xVals.push(v);
+        yVals.push(1);
+      }
+    }
     return {
-      x: pts.map((r) => xLabel.includes("Final") ? r.final_key_qber! : r.measured_qber),
-      type: "histogram" as const,
+      x: xVals,
+      y: yVals,
+      type: "scatter" as const,
+      mode: "lines" as const,
       name: b.label,
-      marker: { color: BAND_COLORS[i] },
+      line: { color: BAND_COLORS[i] },
       showlegend: showLegend,
+      stackgroup: "one",
     };
   });
 
   Plotly.newPlot(div, traces, {
     ...baseLayout(),
-    barmode: "stack",
     title,
     xaxis: { title: xLabel, gridcolor: gridColor() },
     yaxis: { title: "Count", gridcolor: gridColor() },
