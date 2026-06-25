@@ -48,14 +48,14 @@ export function renderCharts(results: ExperimentResult[], activeProtocols: strin
   const measuredZero = secure.filter((r) => r.measured_qber === 0);
   const measuredNonZero = secure.filter((r) => r.measured_qber !== 0);
   renderZeroBars(zeroBarMeasured, measuredZero, bands, activeProtocols, "Measured QBER = 0");
-  renderLineChart(measuredDiv, measuredNonZero, bands, activeProtocols, "Measured QBER Distribution (Secure, QBER > 0)", "Measured QBER");
+  renderLineChart(measuredDiv, measuredNonZero, bands, activeProtocols, "Measured QBER", "Measured QBER");
 
   // Final Key QBER
   const secureFinal = secure.filter((r) => r.final_key_qber !== null);
   const finalZero = secureFinal.filter((r) => r.final_key_qber === 0);
   const finalNonZero = secureFinal.filter((r) => r.final_key_qber !== 0);
   renderZeroBars(zeroBarFinal, finalZero, bands, activeProtocols, "Final Key QBER = 0");
-  renderLineChart(finalDiv, finalNonZero, bands, activeProtocols, "Final Key QBER Distribution (Secure, QBER > 0)", "Final Key QBER");
+  renderLineChart(finalDiv, finalNonZero, bands, activeProtocols, "Final Key QBER", "Final Key QBER");
 }
 
 interface Band { lo: number; hi: number; label: string; last: boolean; }

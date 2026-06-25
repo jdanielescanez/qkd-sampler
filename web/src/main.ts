@@ -33,6 +33,11 @@ document.getElementById("theme-toggle")!.addEventListener("click", toggleTheme);
 document.getElementById("abort-btn")!.addEventListener("click", onAbort);
 document.getElementById("download-btn")!.addEventListener("click", () => downloadCsv(results));
 
+// Sidebar toggle for mobile
+const sidebar = document.getElementById("params-form")!;
+document.getElementById("sidebar-open")!.addEventListener("click", () => sidebar.classList.remove("translate-x-[-100%]"));
+document.getElementById("sidebar-close")!.addEventListener("click", () => sidebar.classList.add("translate-x-[-100%]"));
+
 function onSubmit(params: SimulationParams): void {
   results.length = 0;
   secureCount = 0;
@@ -45,6 +50,7 @@ function onSubmit(params: SimulationParams): void {
   hideFilters();
   hideProtocolToggle();
   showLoader();
+  sidebar.classList.add("translate-x-[-100%]");
   document.getElementById("idle-banner")!.classList.add("hidden");
   document.getElementById("charts-section")!.classList.add("hidden");
   document.getElementById("abort-btn")!.classList.remove("hidden");
