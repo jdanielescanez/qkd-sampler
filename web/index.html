@@ -6,23 +6,12 @@
   <title>QKD Sampler</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
 </head>
-<body class="bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 font-sans h-screen flex flex-col overflow-hidden">
+<body class="bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 font-sans h-screen flex overflow-hidden">
 
-  <!-- Header -->
-  <header class="h-12 border-b border-slate-200 dark:border-slate-700 flex items-center justify-between px-6 shrink-0">
-    <img src="/qkd-crate-light.png" alt="QKD Sampler" class="h-8 dark:hidden" /><img src="/qkd-crate-dark.png" alt="QKD Sampler" class="h-8 hidden dark:block" />
-    <div class="flex items-center gap-4">
-      <button id="download-btn" class="text-xs border border-slate-300 dark:border-slate-600 px-3 py-1 rounded hover:bg-slate-100 dark:hover:bg-slate-800" title="Download CSV">↓ CSV</button>
-      <button id="theme-toggle" class="text-xs border border-slate-300 dark:border-slate-600 px-3 py-1 rounded hover:bg-slate-100 dark:hover:bg-slate-800">◐ Theme</button>
-    </div>
-  </header>
-
-  <!-- Variable Selection Filters moved inside main content -->
-
-  <div class="flex flex-1 overflow-hidden">
-    <!-- Sidebar -->
-    <aside id="params-form" class="w-72 border-r border-slate-200 dark:border-slate-700 flex flex-col overflow-y-auto shrink-0 p-4 gap-5 text-sm">
-      <h2 class="text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400 border-b border-slate-200 dark:border-slate-700 pb-3">Simulation Parameters</h2>
+  <!-- Sidebar -->
+  <aside id="params-form" class="w-72 border-r border-slate-200 dark:border-slate-700 flex flex-col overflow-y-auto shrink-0 text-sm">
+      <h2 class="h-[45px] flex items-center px-4 text-xs font-semibold uppercase tracking-wide text-slate-700 dark:text-slate-300 border-b border-slate-200 dark:border-slate-700 shrink-0">Simulation Parameters</h2>
+      <div class="flex flex-col gap-5 p-4 overflow-y-auto">
       <div>
         <label class="block font-medium mb-1 uppercase text-xs text-slate-500 dark:text-slate-400">Protocols</label>
         <div id="protocols" class="space-y-1"></div>
@@ -72,10 +61,21 @@
         <button id="run-btn" class="w-full bg-blue-600 text-white py-2 rounded text-xs font-semibold uppercase tracking-wider hover:bg-blue-700 transition-colors">Run Simulation</button>
         <button id="abort-btn" class="hidden w-full bg-red-600 text-white py-2 rounded text-xs font-semibold uppercase tracking-wider hover:bg-red-700 transition-colors">Abort</button>
       </div>
+      </div>
     </aside>
 
     <!-- Main Content -->
-    <main class="flex-1 overflow-y-auto p-6 space-y-4 relative">
+    <main class="flex-1 flex flex-col overflow-hidden">
+      <!-- Header -->
+      <header class="h-[45px] border-b border-slate-200 dark:border-slate-700 flex items-center justify-between pl-4 pr-6 shrink-0">
+        <h1 class="text-xs font-semibold uppercase tracking-wide text-slate-700 dark:text-slate-300">Simulation Results</h1>
+        <div class="flex items-center gap-4">
+          <button id="download-btn" class="hidden text-xs border border-slate-300 dark:border-slate-600 px-3 py-1 rounded hover:bg-slate-100 dark:hover:bg-slate-800" title="Download CSV">↓ CSV</button>
+          <button id="theme-toggle" class="text-xs border border-slate-300 dark:border-slate-600 px-3 py-1 rounded hover:bg-slate-100 dark:hover:bg-slate-800">◐ Theme</button>
+        </div>
+      </header>
+
+      <div class="flex-1 overflow-y-auto p-6 space-y-4 relative">
       <!-- Idle Banner (shown when no simulation has run) -->
       <div id="idle-banner" class="flex items-center justify-center h-full">
         <div class="border border-slate-200 dark:border-slate-700 rounded-xl bg-white dark:bg-slate-800 shadow-sm p-10 text-center max-w-md">
@@ -134,8 +134,8 @@
           <div id="chart-final-qber" class="h-80" style="width:100%"></div>
         </div>
       </div>
+      </div>
     </main>
-  </div>
 
   <script type="module" src="/src/main.ts"></script>
 </body>

@@ -84,6 +84,7 @@ function finishSimulation(): void {
   const protocols = [...new Set(results.map((r) => r.protocol))];
   showProtocolToggle(protocols);
   document.getElementById("charts-section")!.classList.remove("hidden");
+  document.getElementById("download-btn")!.classList.remove("hidden");
   showMetrics();
   requestAnimationFrame(() => renderWithSelection(sel));
 }
