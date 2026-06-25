@@ -52,5 +52,6 @@ export function updateArcs(secure: number, insecure: number, total: number): voi
   redCircle.setAttribute("transform", `rotate(${-90 + greenAngle} 100 100)`);
 
   // Center text
-  textEl.textContent = `${secure} / ${secure + insecure}`;
+  const pct = total > 0 ? Math.round(((secure + insecure) / total) * 100) : 0;
+  textEl.textContent = `${pct}%`;
 }

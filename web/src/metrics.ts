@@ -34,7 +34,6 @@ export function renderMetrics(results: ExperimentResult[], activeProtocols: stri
       ? finalQberResults.reduce((s, r) => s + r.final_key_qber!, 0) / finalQberResults.length
       : null;
     const keyed = secure.filter((r) => r.key_length !== null);
-    const avgKeyLen = keyed.length ? keyed.reduce((s, r) => s + r.key_length!, 0) / keyed.length : 0;
     const securePct = total ? ((secure.length / total) * 100).toFixed(1) : "0";
     const avgEfficiency = keyed.length
       ? keyed.reduce((s, r) => s + (r.key_length! / r.number_of_qubits) * 100, 0) / keyed.length
@@ -49,10 +48,9 @@ export function renderMetrics(results: ExperimentResult[], activeProtocols: stri
     row.className = "space-y-1";
     row.innerHTML = `
       <div class="text-xs font-semibold uppercase tracking-wide" style="color:${color}">${protocol}</div>
-      <div class="grid grid-cols-2 lg:grid-cols-4 xl:grid-cols-7 gap-3">
+      <div class="grid grid-cols-2 lg:grid-cols-4 xl:grid-cols-6 gap-3">
         ${card("Avg Measured QBER", total ? `${(avgMeasuredQber * 100).toFixed(2)}%` : "—")}
         ${card("Avg Final Key QBER", avgFinalQber !== null ? `${(avgFinalQber * 100).toFixed(2)}%` : "—")}
-        ${card("Avg Key Length", keyed.length ? `${Math.round(avgKeyLen)} bits` : "—")}
         ${card("Secure / Total", total ? `${secure.length}/${total} = ${securePct}%` : "—")}
         ${card("Key Efficiency", keyed.length ? `${avgEfficiency.toFixed(1)}%` : "—")}
         ${card("Mean Eve's Knowledge", total ? `${(avgEve * 100).toFixed(2)}%` : "—")}
